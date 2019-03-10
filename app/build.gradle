@@ -1,0 +1,26 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "org.appspot.apprtc"
+        minSdkVersion 16
+        targetSdkVersion 21
+        versionCode 1
+        // based on this commit
+        versionName "63eb65cd819b0ba7b5df34dbcc4dd756b0029b6c"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'org.webrtc:google-webrtc:1.0.+'
+}

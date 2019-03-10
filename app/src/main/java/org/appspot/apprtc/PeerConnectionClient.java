@@ -1293,6 +1293,7 @@ public class PeerConnectionClient {
             strData = new String(bytes, Charset.forName("UTF-8"));
             Log.d(TAG, "Got msg: " + strData + " over " + dc);
           }
+          events.onPeerConnectionGotDataMsg(strData);
         }
       });
     }

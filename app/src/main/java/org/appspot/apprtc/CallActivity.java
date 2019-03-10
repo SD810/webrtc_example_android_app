@@ -974,4 +974,9 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
   public void onPeerConnectionError(final String description) {
     reportError(description);
   }
+
+  @Override
+  public void onPeerConnectionGotDataMsg(final String msg) {
+      runOnUiThread(()->logAndToast(msg));
+  }
 }

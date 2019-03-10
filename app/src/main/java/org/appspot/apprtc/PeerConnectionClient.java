@@ -317,6 +317,11 @@ public class PeerConnectionClient {
      * Callback fired once peer connection error happened.
      */
     void onPeerConnectionError(final String description);
+
+    /**
+     * Callback fired when chat arrives, binary or text.
+     */
+    void onPeerConnectionGotDataMsg(final String msg);
   }
 
   /**

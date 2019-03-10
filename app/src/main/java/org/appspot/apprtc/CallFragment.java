@@ -111,19 +111,13 @@ public class CallFragment extends Fragment {
       public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         // act for "done" action
         if (actionId == EditorInfo.IME_ACTION_DONE) {
-          callEvents.onChatSend(chatArea.getText().toString());
-
-          //clear text field after send
-          //chatArea.setText("");
+          sendAndResetEt();
           return true;
         }
 
         // act for enter key
         if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_NUMPAD_ENTER){
-          callEvents.onChatSend(chatArea.getText().toString());
-
-          //clear text field after send
-          //chatArea.setText("");
+          sendAndResetEt();
           return true;
         }
         return false;
@@ -131,6 +125,16 @@ public class CallFragment extends Fragment {
     });
 
     return controlView;
+  }
+
+  private void sendAndResetEt(){
+    String text = chatArea.getText().toString().trim();
+    if(text.length() > 0) {
+      callEvents.onChatSend(text);
+
+      //clear text field after send
+      chatArea.setText("");
+    }
   }
 
   @Override

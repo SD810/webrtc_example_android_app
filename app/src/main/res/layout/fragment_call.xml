@@ -70,7 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/etTextSend"
+        android:layout_above="@+id/chat_area"
         android:progress="50"
         android:layout_margin="8dp"/>
     <EditText
@@ -81,6 +81,6 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:imeOptions="actionDone"
-            android:id="@+id/etTextSend"/>
+            android:id="@+id/chat_area"/>
 
 </RelativeLayout>

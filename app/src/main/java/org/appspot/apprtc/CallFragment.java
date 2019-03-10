@@ -13,9 +13,12 @@ package org.appspot.apprtc;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -34,6 +37,7 @@ public class CallFragment extends Fragment {
   private SeekBar captureFormatSlider;
   private OnCallEvents callEvents;
   private ScalingType scalingType;
+  private EditText chatArea;
   private boolean videoCallEnabled = true;
 
   /**
@@ -45,6 +49,7 @@ public class CallFragment extends Fragment {
     void onVideoScalingSwitch(ScalingType scalingType);
     void onCaptureFormatChange(int width, int height, int framerate);
     boolean onToggleMic();
+    void onChatSend(String text);
   }
 
   @Override
@@ -60,6 +65,7 @@ public class CallFragment extends Fragment {
     toggleMuteButton = controlView.findViewById(R.id.button_call_toggle_mic);
     captureFormatText = controlView.findViewById(R.id.capture_format_text_call);
     captureFormatSlider = controlView.findViewById(R.id.capture_format_slider_call);
+    chatArea = controlView.findViewById(R.id.chat_area);
 
     // Add buttons click events.
     disconnectButton.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +102,31 @@ public class CallFragment extends Fragment {
       public void onClick(View view) {
         boolean enabled = callEvents.onToggleMic();
         toggleMuteButton.setAlpha(enabled ? 1.0f : 0.3f);
+      }
+    });
+
+    // make chatArea work
+    chatArea.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+      @Override
+      public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        // act for "done" action
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+          callEvents.onChatSend(chatArea.getText().toString());
+
+          //clear text field after send
+          //chatArea.setText("");
+          return true;
+        }
+
+        // act for enter key
+        if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_NUMPAD_ENTER){
+          callEvents.onChatSend(chatArea.getText().toString());
+
+          //clear text field after send
+          //chatArea.setText("");
+          return true;
+        }
+        return false;
       }
     });
 

@@ -1,7 +1,9 @@
 # webrtc_example_android_app
-WebRTC example android app 
+**[UNOFFICIAL]** WebRTC example android app 
 
 converted and add DataChannel message transmission support on Call screen.
+
+I'm not official contributor of WebRTC NOR appr.tc
 
 
 used 63eb65cd819b0ba7b5df34dbcc4dd756b0029b6c from 

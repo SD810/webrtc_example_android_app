@@ -548,6 +548,14 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     return micEnabled;
   }
 
+
+  @Override
+  public void onChatSend(String text) {
+    if (peerConnectionClient != null) {
+      peerConnectionClient.sendText(text,"text");
+    }
+  }
+
   // Helper functions.
   private void toggleCallControlFragmentVisibility() {
     if (!connected || !callFragment.isAdded()) {

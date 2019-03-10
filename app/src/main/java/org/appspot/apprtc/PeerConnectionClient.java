@@ -15,9 +15,11 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.util.Log;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
@@ -1159,6 +1161,29 @@ public class PeerConnectionClient {
     videoSource.adaptOutputFormat(width, height, framerate);
   }
 
+  public void sendText(String data, String type){
+    //https://www.programcreek.com/java-api-examples/?code=angellsl10/react-native-webrtc/react-native-webrtc-master/android/src/main/java/com/oney/WebRTCModule/PeerConnectionObserver.java
+    if (dataChannel != null) {
+      byte[] byteArray;
+      if (type.equals("text")) {
+        try {
+          byteArray = data.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+          Log.d(TAG, "Could not encode text string as UTF-8.");
+          return;
+        }
+      } else if (type.equals("binary")) {
+        byteArray = Base64.decode(data, Base64.NO_WRAP);
+      } else {
+        Log.e(TAG, "Unsupported data type: " + type);
+        return;
+      }
+      ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray);
+      DataChannel.Buffer buffer = new DataChannel.Buffer(byteBuffer, type.equals("binary"));
+      dataChannel.send(buffer);
+    }
+  }
+
   // Implementation detail: observe ICE & stream changes and react accordingly.
   private class PCObserver implements PeerConnection.Observer {
     @Override
@@ -1240,15 +1265,29 @@ public class PeerConnectionClient {
 
         @Override
         public void onMessage(final DataChannel.Buffer buffer) {
-          if (buffer.binary) {
-            Log.d(TAG, "Received binary msg over " + dc);
-            return;
+          //https://www.programcreek.com/java-api-examples/?code=angellsl10/react-native-webrtc/react-native-webrtc-master/android/src/main/java/com/oney/WebRTCModule/DataChannelObserver.java
+
+          byte[] bytes;
+          if (buffer.data.hasArray()) {
+            bytes = buffer.data.array();
+          } else {
+            //capacity(), instead remaining() which leads zero buffer size.
+            bytes = new byte[buffer.data.capacity()];
+
+            //setting cursor's position to 0, to prevent BufferUnderflowException.
+            buffer.data.position(0);
+
+            buffer.data.get(bytes);
           }
-          ByteBuffer data = buffer.data;
-          final byte[] bytes = new byte[data.capacity()];
-          data.get(bytes);
-          String strData = new String(bytes, Charset.forName("UTF-8"));
-          Log.d(TAG, "Got msg: " + strData + " over " + dc);
+
+          String strData;
+          if (buffer.binary) {
+            strData = Base64.encodeToString(bytes, Base64.NO_WRAP);
+            Log.d(TAG, "Got binary msg: " + strData + " over " + dc);
+          }else {
+            strData = new String(bytes, Charset.forName("UTF-8"));
+            Log.d(TAG, "Got msg: " + strData + " over " + dc);
+          }
         }
       });
     }

@@ -1276,12 +1276,7 @@ public class PeerConnectionClient {
           if (buffer.data.hasArray()) {
             bytes = buffer.data.array();
           } else {
-            //capacity(), instead remaining() which leads zero buffer size.
-            bytes = new byte[buffer.data.capacity()];
-
-            //setting cursor's position to 0, to prevent BufferUnderflowException.
-            buffer.data.position(0);
-
+            bytes = new byte[buffer.data.remaining()];
             buffer.data.get(bytes);
           }
 
